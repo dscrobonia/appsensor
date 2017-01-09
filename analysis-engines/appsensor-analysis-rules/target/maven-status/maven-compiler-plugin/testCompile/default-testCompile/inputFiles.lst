@@ -1,0 +1,7 @@
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/TrimTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/CheckExpressionTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/CheckClauseTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/CheckRuleTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/GetQueueIntervalTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/AggregateEventAnalysisEngineIntegrationTest.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/test/java/org/owasp/appsensor/analysis/AggregateEventAnalysisEngineUnitTestSuite.java

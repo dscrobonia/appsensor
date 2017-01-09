@@ -1,0 +1,5 @@
+org/owasp/appsensor/analysis/AggregateResponseAnalysisEngine.class
+org/owasp/appsensor/analysis/AggregateAttackAnalysisEngine.class
+org/owasp/appsensor/analysis/AggregateEventAnalysisEngine.class
+org/owasp/appsensor/analysis/Notification.class
+org/owasp/appsensor/analysis/Notification$1.class

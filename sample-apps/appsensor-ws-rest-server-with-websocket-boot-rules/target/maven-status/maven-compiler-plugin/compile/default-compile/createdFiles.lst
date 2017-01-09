@@ -1,0 +1,2 @@
+org/owasp/appsensor/AppsensorWsRestServerWithWebsocketBootApplication.class
+org/owasp/appsensor/websocket/WebSocketDashboard.class

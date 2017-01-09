@@ -1,0 +1,4 @@
+org/owasp/appsensor/storage/riak/stores/RiakResponseStore.class
+org/owasp/appsensor/storage/riak/RiakConstants.class
+org/owasp/appsensor/storage/riak/stores/RiakAttackStore.class
+org/owasp/appsensor/storage/riak/stores/RiakEventStore.class

@@ -1,0 +1,4 @@
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/main/java/org/owasp/appsensor/analysis/AggregateAttackAnalysisEngine.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/main/java/org/owasp/appsensor/analysis/AggregateResponseAnalysisEngine.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/main/java/org/owasp/appsensor/analysis/AggregateEventAnalysisEngine.java
+/home/david/projects/appsensor/analysis-engines/appsensor-analysis-rules/src/main/java/org/owasp/appsensor/analysis/Notification.java

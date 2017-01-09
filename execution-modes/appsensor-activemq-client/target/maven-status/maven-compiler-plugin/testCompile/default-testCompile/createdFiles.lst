@@ -1,0 +1,2 @@
+org/owasp/appsensor/event/ActiveMqEventManagerTest.class
+org/owasp/appsensor/response/NoopResponseHandler.class

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.owasp.appsensor.analysis.CheckExpressionTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.158 sec - in org.owasp.appsensor.analysis.CheckExpressionTest

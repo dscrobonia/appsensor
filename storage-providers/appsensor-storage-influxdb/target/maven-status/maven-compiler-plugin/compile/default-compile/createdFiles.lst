@@ -1,0 +1,5 @@
+org/owasp/appsensor/storage/influxdb/Utils.class
+org/owasp/appsensor/storage/influxdb/InfluxDbAttackStore.class
+org/owasp/appsensor/storage/influxdb/Utils$QueryMode.class
+org/owasp/appsensor/storage/influxdb/InfluxDbEventStore.class
+org/owasp/appsensor/storage/influxdb/InfluxDbResponseStore.class

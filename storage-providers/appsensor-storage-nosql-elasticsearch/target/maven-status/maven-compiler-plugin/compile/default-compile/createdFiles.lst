@@ -1,0 +1,16 @@
+org/owasp/appsensor/storage/elasticsearch/configuration/EnableSchedulingConfiguration.class
+org/owasp/appsensor/storage/elasticsearch/mapping/KeyValuePairMixin.class
+org/owasp/appsensor/storage/elasticsearch/mapping/GeoLocationJacksonDeserializer$1.class
+org/owasp/appsensor/storage/elasticsearch/ElasticSearchEventStore.class
+org/owasp/appsensor/storage/elasticsearch/dao/AbstractElasticRepository.class
+org/owasp/appsensor/storage/elasticsearch/mapping/KeyValuePairCollectionDeserializer.class
+org/owasp/appsensor/storage/elasticsearch/dao/ResponseRepository.class
+org/owasp/appsensor/storage/elasticsearch/ElasticSearchResponseStore.class
+org/owasp/appsensor/storage/elasticsearch/mapping/KeyValuePairCollectionSerializer.class
+org/owasp/appsensor/storage/elasticsearch/mapping/GeoLocationJacksonSerializer.class
+org/owasp/appsensor/storage/elasticsearch/mapping/ElasticSearchJsonMapper.class
+org/owasp/appsensor/storage/elasticsearch/dao/AttackRepository.class
+org/owasp/appsensor/storage/elasticsearch/ElasticSearchAttackStore.class
+org/owasp/appsensor/storage/elasticsearch/dao/EventRepository.class
+org/owasp/appsensor/storage/elasticsearch/mapping/KeyValuePairCollectionDeserializer$1.class
+org/owasp/appsensor/storage/elasticsearch/mapping/GeoLocationJacksonDeserializer.class

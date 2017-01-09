@@ -1,0 +1,3 @@
+org/owasp/appsensor/storage/elasticsearch/ElasticTestConfiguration.class
+org/owasp/appsensor/storage/elasticsearch/ElasticSearchEventStorageTest.class
+org/owasp/appsensor/storage/elasticsearch/ElasticTestConfiguration$1.class

@@ -1,0 +1,7 @@
+org/owasp/appsensor/analysis/CheckExpressionTest.class
+org/owasp/appsensor/analysis/GetQueueIntervalTest.class
+org/owasp/appsensor/analysis/CheckClauseTest.class
+org/owasp/appsensor/analysis/AggregateEventAnalysisEngineUnitTestSuite.class
+org/owasp/appsensor/analysis/CheckRuleTest.class
+org/owasp/appsensor/analysis/TrimTest.class
+org/owasp/appsensor/analysis/AggregateEventAnalysisEngineIntegrationTest.class

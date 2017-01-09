@@ -1,0 +1,4 @@
+/home/david/projects/appsensor/storage-providers/appsensor-storage-nosql-riak/src/main/java/org/owasp/appsensor/storage/riak/stores/RiakResponseStore.java
+/home/david/projects/appsensor/storage-providers/appsensor-storage-nosql-riak/src/main/java/org/owasp/appsensor/storage/riak/RiakConstants.java
+/home/david/projects/appsensor/storage-providers/appsensor-storage-nosql-riak/src/main/java/org/owasp/appsensor/storage/riak/stores/RiakAttackStore.java
+/home/david/projects/appsensor/storage-providers/appsensor-storage-nosql-riak/src/main/java/org/owasp/appsensor/storage/riak/stores/RiakEventStore.java
