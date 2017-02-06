@@ -127,9 +127,11 @@ public abstract class AttackStore {
 			}
 
 			//check rule match if rule specified
-			boolean ruleMatch = (rule != null) ?
-					rule.equals(attack.getRule()) : true;
-
+			boolean ruleMatch = true;
+			if (rule != null) {
+				ruleMatch = (attack.getRule() != null) ?
+					rule.guidMatches(attack.getRule()) : false;
+			}
 
 			DateTime attackTimestamp = DateUtils.fromString(attack.getTimestamp());
 

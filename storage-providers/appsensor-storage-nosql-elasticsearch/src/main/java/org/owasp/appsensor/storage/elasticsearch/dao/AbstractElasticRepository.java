@@ -2,6 +2,7 @@ package org.owasp.appsensor.storage.elasticsearch.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
@@ -19,6 +20,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.owasp.appsensor.core.*;
 import org.owasp.appsensor.core.criteria.SearchCriteria;
+import org.owasp.appsensor.core.rule.Rule;
 import org.owasp.appsensor.storage.elasticsearch.mapping.ElasticSearchJsonMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.datetime.DateFormatter;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
@@ -161,46 +164,24 @@ public abstract class AbstractElasticRepository {
     }
 
 
-    protected QueryBuilder convertSearchCriteriaToQueryBuilder(SearchCriteria searchCriteria) {
+    protected BoolQueryBuilder convertSearchCriteriaToQueryBuilder(SearchCriteria searchCriteria) {
         BoolQueryBuilder query = QueryBuilders.boolQuery();
 
         DetectionPoint detectionPoint = searchCriteria.getDetectionPoint();
+        Rule rule = searchCriteria.getRule();
 
         if (detectionPoint != null) {
-            if (StringUtils.isNotBlank(detectionPoint.getCategory())) {
-                query = query.must(QueryBuilders.termQuery("detectionPoint.category", detectionPoint.getCategory()));
-            }
+            query = buildDetectionPointBoolQuery(query, detectionPoint);
+        }
 
-            if (StringUtils.isNotBlank(detectionPoint.getLabel())) {
-                query = query.must(QueryBuilders.termQuery("detectionPoint.label", detectionPoint.getLabel()));
-            }
-            Threshold threshold = detectionPoint.getThreshold();
-
-            if (threshold != null) {
-                int thresholdCount = threshold.getCount();
-                if (thresholdCount > 0) {
-                    query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.thresholdCount", thresholdCount));
-                }
-
-                Interval interval = threshold.getInterval();
-                if (interval != null) {
-                    int duration = interval.getDuration();
-                    if (duration > 0) {
-                        query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.interval.duration", duration));
-                    }
-
-                    if (StringUtils.isNotBlank(interval.getUnit())) {
-                        query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.interval.unit", interval.getUnit()));
-                    }
-                }
-            }
+        if (rule != null) {
+        	query = buildRuleBoolQuery(query, rule);
         }
 
         Collection<String> detectionSystemIds = searchCriteria.getDetectionSystemIds();
         if (detectionSystemIds != null && detectionSystemIds.size() > 0) {
             query = query.must(QueryBuilders.termsQuery("detectionSystem.detectionSystemId", detectionSystemIds));
         }
-
 
         String earliest = searchCriteria.getEarliest();
         if (StringUtils.isNotEmpty(earliest)) {
@@ -215,16 +196,58 @@ public abstract class AbstractElasticRepository {
             }
         }
 
+        return query;
+    }
+
+    protected BoolQueryBuilder buildDetectionPointBoolQuery(BoolQueryBuilder query, DetectionPoint detectionPoint) {
+    	if (StringUtils.isNotBlank(detectionPoint.getCategory())) {
+            query = query.must(QueryBuilders.termQuery("detectionPoint.category", detectionPoint.getCategory()));
+        }
+
+        if (StringUtils.isNotBlank(detectionPoint.getLabel())) {
+            query = query.must(QueryBuilders.termQuery("detectionPoint.label", detectionPoint.getLabel()));
+        }
+        Threshold threshold = detectionPoint.getThreshold();
+
+        if (threshold != null) {
+            int thresholdCount = threshold.getCount();
+            if (thresholdCount > 0) {
+                query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.thresholdCount", thresholdCount));
+            }
+
+            Interval interval = threshold.getInterval();
+            if (interval != null) {
+                int duration = interval.getDuration();
+                if (duration > 0) {
+                    query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.interval.duration", duration));
+                }
+
+                if (StringUtils.isNotBlank(interval.getUnit())) {
+                    query = query.must(QueryBuilders.termQuery("detectionPoint.threshold.interval.unit", interval.getUnit()));
+                }
+            }
+        }
+
+    	return query;
+    }
+
+    protected BoolQueryBuilder buildRuleBoolQuery(BoolQueryBuilder query, Rule rule) {
+        if (StringUtils.isNotBlank(rule.getGuid())) {
+            query = query.must(QueryBuilders.termQuery("rule.guid", rule.getGuid()));
+        }
 
         return query;
     }
 
-
     protected <T extends IAppsensorEntity> List<T> findBySearchCriteria(SearchCriteria searchCriteria, Class<T> type) throws IOException {
+        return findByQueryBuilder(convertSearchCriteriaToQueryBuilder(searchCriteria), type);
+    }
+
+    protected <T extends IAppsensorEntity> List<T> findByQueryBuilder(QueryBuilder queryBuilder, Class<T> type) throws IOException {
         SearchResponse searchResponse = getClient().prepareSearch(getIndexName())
                 .setTypes(getElasticIndexType())
                 .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
-                .setQuery(convertSearchCriteriaToQueryBuilder(searchCriteria))
+                .setQuery(queryBuilder)
                 .execute()
                 .actionGet();
 
@@ -240,7 +263,6 @@ public abstract class AbstractElasticRepository {
         }
 
         return resultList;
-
     }
 
     public void save(IAppsensorEntity entity) throws JsonProcessingException {
@@ -252,7 +274,6 @@ public abstract class AbstractElasticRepository {
                 .actionGet().getId();
 
         entity.setId(id);
-
     }
 
 

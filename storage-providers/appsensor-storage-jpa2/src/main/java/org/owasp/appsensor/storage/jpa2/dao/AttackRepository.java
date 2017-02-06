@@ -18,8 +18,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This is a repository/dao class for storing/retrieving {@link Attack} objects 
- * 
+ * This is a repository/dao class for storing/retrieving {@link Attack} objects
+ *
  * @author John Melton (jtmelton@gmail.com) http://www.jtmelton.com/
  */
 @Repository
@@ -28,12 +28,12 @@ public class AttackRepository {
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	public AttackRepository() { }
-	
+
 	/**
 	 * Save {@link Attack} to DB
-	 * 
+	 *
 	 * @param attack {@link Attack} to save
 	 */
 	@Transactional
@@ -42,10 +42,10 @@ public class AttackRepository {
 		em.flush();
 		attack.setId(merged.getId());
 	}
-	
+
 	/**
 	 * Search for {@link Attack} by id
-	 * 
+	 *
 	 * @param id id to search by
 	 * @return single {@link Attack} object found by id, or null if not exists
 	 */
@@ -55,20 +55,20 @@ public class AttackRepository {
 				.setParameter("id", id)
 				.getSingleResult();
 	}
-	
+
 	/**
 	 * Retrive all {@link Attack}s from the DB
-	 * 
+	 *
 	 * @return {@link Collection} of {@link Attack}s from the DB
 	 */
 	@Transactional(readOnly = true)
 	public Collection<Attack> findAll() {
 		return em.createQuery("FROM Attack", Attack.class).getResultList();
 	}
-	
+
 	/**
 	 * Retrive all {@link Attack}s from the DB matching criteria
-	 * 
+	 *
 	 * @return {@link Collection} of {@link Attack}s from the DB
 	 */
 	@Transactional(readOnly = true)
@@ -76,54 +76,87 @@ public class AttackRepository {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Attack> criteriaQuery = criteriaBuilder.createQuery(Attack.class);
 		Root<Attack> root = criteriaQuery.from(Attack.class);
-		
+
 		Collection<Predicate> conditions = new ArrayList<>();
-		
+
 		if (searchCriteria.getUser() != null) {
 			Predicate userCondition = criteriaBuilder.equal(root.get("user").get("username"), searchCriteria.getUser().getUsername());
 			conditions.add(userCondition);
 		}
-		
+
 		if (searchCriteria.getDetectionPoint() != null) {
-			
+			if (searchCriteria.getDetectionPoint().getGuid() != null) {
+				Predicate guidCondition = criteriaBuilder.equal(root.get("detectionPoint").get("guid"),
+						searchCriteria.getDetectionPoint().getGuid());
+				conditions.add(guidCondition);
+			}
+
 			if (searchCriteria.getDetectionPoint().getCategory() != null) {
-				Predicate categoryCondition = criteriaBuilder.equal(root.get("detectionPoint").get("category"), 
+				Predicate categoryCondition = criteriaBuilder.equal(root.get("detectionPoint").get("category"),
 						searchCriteria.getDetectionPoint().getCategory());
 				conditions.add(categoryCondition);
 			}
-			
+
 			if (searchCriteria.getDetectionPoint().getLabel() != null) {
-				Predicate labelCondition = criteriaBuilder.equal(root.get("detectionPoint").get("label"), 
+				Predicate labelCondition = criteriaBuilder.equal(root.get("detectionPoint").get("label"),
 						searchCriteria.getDetectionPoint().getLabel());
 				conditions.add(labelCondition);
 			}
-			
+
 			if (searchCriteria.getDetectionPoint().getThreshold() != null) {
-				
+
 				if (searchCriteria.getDetectionPoint().getThreshold().getCount() > 0) {
-					Predicate countCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("count"), 
+					Predicate countCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("count"),
 							searchCriteria.getDetectionPoint().getThreshold().getCount());
 					conditions.add(countCondition);
 				}
-				
+
+				//todo: confirm this fix is correct
 				if (searchCriteria.getDetectionPoint().getThreshold().getInterval() != null) {
 					if (searchCriteria.getDetectionPoint().getThreshold().getInterval().getUnit() != null) {
-						Predicate durationCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("interval").get("duration"), 
-								searchCriteria.getDetectionPoint().getThreshold().getInterval().getDuration());
-						conditions.add(durationCondition);
-					}
-					
-					if (searchCriteria.getDetectionPoint().getThreshold().getInterval().getDuration() > 0) {
-						Predicate unitCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("interval").get("unit"), 
+						Predicate unitCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("interval").get("unit"),
 								searchCriteria.getDetectionPoint().getThreshold().getInterval().getUnit());
 						conditions.add(unitCondition);
 					}
+
+					if (searchCriteria.getDetectionPoint().getThreshold().getInterval().getDuration() > 0) {
+						Predicate durationCondition = criteriaBuilder.equal(root.get("detectionPoint").get("threshold").get("interval").get("duration"),
+								searchCriteria.getDetectionPoint().getThreshold().getInterval().getDuration());
+						conditions.add(durationCondition);
+					}
 				}
-				
 			}
-			
 		}
-		
+
+		if (searchCriteria.getRule() != null) {
+
+			if (searchCriteria.getRule().getGuid() != null) {
+				Predicate guidCondition = criteriaBuilder.equal(root.get("rule").get("guid"),
+						searchCriteria.getRule().getGuid());
+				conditions.add(guidCondition);
+			}
+
+			if (searchCriteria.getRule().getWindow() != null) {
+				if (searchCriteria.getRule().getWindow().getDuration() > 0) {
+					Predicate durationCondition = criteriaBuilder.equal(root.get("rule").get("window").get("duration"),
+							searchCriteria.getRule().getWindow().getDuration());
+					conditions.add(durationCondition);
+				}
+
+				if (searchCriteria.getRule().getWindow().getUnit() != null) {
+					Predicate unitCondition = criteriaBuilder.equal(root.get("rule").get("window").get("unit"),
+							searchCriteria.getRule().getWindow().getUnit());
+					conditions.add(unitCondition);
+				}
+			}
+
+			if (searchCriteria.getRule().getName() != null) {
+				Predicate nameCondition = criteriaBuilder.equal(root.get("rule").get("name"),
+						searchCriteria.getRule().getName());
+				conditions.add(nameCondition);
+			}
+		}
+
 		if (searchCriteria.getDetectionSystemIds() != null) {
 			Predicate detectionSystemCondition = root.get("detectionSystem").get("detectionSystemId").in(searchCriteria.getDetectionSystemIds());
 			conditions.add(detectionSystemCondition);
@@ -132,13 +165,13 @@ public class AttackRepository {
 		if (conditions.size() > 0) {
 			criteriaQuery.where(criteriaBuilder.and(conditions.toArray(new Predicate[0])));
 		}
-		
+
 		criteriaQuery.orderBy(criteriaBuilder.asc(root.get("timestamp")));
 
-		TypedQuery<Attack> query = em.createQuery(criteriaQuery); 
+		TypedQuery<Attack> query = em.createQuery(criteriaQuery);
 		List<Attack> result = query.getResultList();
-		
+
 		return result;
 	}
-	
+
 }

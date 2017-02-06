@@ -18,6 +18,7 @@ import org.owasp.appsensor.core.User;
 import org.owasp.appsensor.core.criteria.SearchCriteria;
 import org.owasp.appsensor.core.listener.EventListener;
 import org.owasp.appsensor.core.logging.Loggable;
+import org.owasp.appsensor.core.rule.Rule;
 import org.owasp.appsensor.core.storage.EventStore;
 import org.owasp.appsensor.core.util.DateUtils;
 import org.slf4j.Logger;
@@ -94,10 +95,28 @@ public class InfluxDbEventStore extends EventStore {
 
     User user = criteria.getUser();
     DetectionPoint detectionPoint = criteria.getDetectionPoint();
+    Rule rule = criteria.getRule();
     Collection<String> detectionSystemIds = criteria.getDetectionSystemIds();
     DateTime earliest = DateUtils.fromString(criteria.getEarliest());
 
-    String influxQL = Utils.constructInfluxQL(Utils.EVENTS, user, detectionPoint, detectionSystemIds, earliest, Utils.QueryMode.CONSIDER_DETECTION_POINT);
+    //todo: implement correct event search
+    String influxQL = Utils.constructInfluxQL(Utils.EVENTS, user,
+      detectionPoint, null,
+      detectionSystemIds,
+      earliest,
+      Utils.QueryMode.CONSIDER_DETECTION_POINT_OR_RULE);
+
+    if (rule != null) {
+      influxQL += " AND (";
+
+      int i = 0;
+      for (DetectionPoint point : rule.getAllDetectionPoints()) {
+        influxQL += (i == 0) ? "" : " OR ";
+        influxQL += Utils.constructDetectionPointSqlString(point);
+
+        i++;
+      }
+    }
 
     Query query = new Query(influxQL, Utils.DATABASE);
 

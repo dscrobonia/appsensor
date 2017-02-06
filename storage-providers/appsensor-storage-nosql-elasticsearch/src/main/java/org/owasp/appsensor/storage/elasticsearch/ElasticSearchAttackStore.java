@@ -36,7 +36,7 @@ public class ElasticSearchAttackStore extends AttackStore {
      */
     @Override
     public void addAttack(Attack attack) {
-        logger.warn("Security attack " + attack.getDetectionPoint().getLabel() + " triggered by user: " + attack.getUser().getUsername());
+        logger.warn("Security attack " + attack.getName() + " triggered by user: " + attack.getUser().getUsername());
 
 
         try {

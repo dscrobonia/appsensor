@@ -16,45 +16,45 @@ import org.slf4j.Logger;
 
 /**
  * This is a jpa2 implementation of the {@link AttackStore}.
- * 
- * Implementations of the {@link AttackListener} interface can register with 
- * this class and be notified when new {@link Attack}s are added to the data store 
- * 
+ *
+ * Implementations of the {@link AttackListener} interface can register with
+ * this class and be notified when new {@link Attack}s are added to the data store
+ *
  * The implementation stores the {@link Attack} in a jpa2 driven DB.
- * 
+ *
  * @author John Melton (jtmelton@gmail.com) http://www.jtmelton.com/
  */
 @Named
 @Loggable
 public class Jpa2AttackStore extends AttackStore {
-	
+
 	private Logger logger;
-	
+
 	/** maintain a repository to read/write {@link Event}s from */
-	@Inject 
+	@Inject
 	AttackRepository attackRepository;
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void addAttack(Attack attack) {
-		logger.warn("Security attack " + attack.getDetectionPoint().getLabel() + " triggered by user: " + attack.getUser().getUsername());
-	       
+		logger.warn("Security attack " + attack.getName() + " triggered by user: " + attack.getUser().getUsername());
+
 		attackRepository.save(attack);
-		
+
 		super.notifyListeners(attack);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Collection<Attack> findAttacks(SearchCriteria criteria) {
 		Collection<Attack> attacksAllTimestamps = attackRepository.find(criteria);
-		
-		// timestamp stored as string not queryable in DB, all timestamps come back, still need to filter this subset		
+
+		// timestamp stored as string not queryable in DB, all timestamps come back, still need to filter this subset
 		return findAttacks(criteria, attacksAllTimestamps);
 	}
-	
+
 }

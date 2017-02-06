@@ -9,6 +9,7 @@ import javax.inject.Named;
 
 import com.google.common.base.Preconditions;
 import com.mongodb.client.model.Filters;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.owasp.appsensor.core.Attack;
@@ -18,6 +19,7 @@ import org.owasp.appsensor.core.User;
 import org.owasp.appsensor.core.criteria.SearchCriteria;
 import org.owasp.appsensor.core.listener.AttackListener;
 import org.owasp.appsensor.core.logging.Loggable;
+import org.owasp.appsensor.core.rule.Rule;
 import org.owasp.appsensor.core.storage.AttackStore;
 import org.slf4j.Logger;
 
@@ -36,36 +38,36 @@ import com.mongodb.util.JSON;
 
 /**
  * This is a mongodb implementation of the {@link AttackStore}.
- * 
- * Implementations of the {@link AttackListener} interface can register with 
- * this class and be notified when new {@link Attack}s are added to the data store 
- * 
+ *
+ * Implementations of the {@link AttackListener} interface can register with
+ * this class and be notified when new {@link Attack}s are added to the data store
+ *
  * @author John Melton (jtmelton@gmail.com) http://www.jtmelton.com/
  */
 @Named
 @Loggable
 public class MongoAttackStore extends AttackStore {
-	
+
 	private MongoCollection<Document> attacks;
-	
+
 	private Gson gson = new Gson();
-	
+
 	private Logger logger;
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void addAttack(Attack attack) {
-		logger.warn("Security attack " + attack.getDetectionPoint().getLabel() + " triggered by user: " + attack.getUser().getUsername());
-	       
+		logger.warn("Security attack " + attack.getName() + " triggered by user: " + attack.getUser().getUsername());
+
 		String json = gson.toJson(attack);
-		
+
 		attacks.insertOne(Document.parse(String.valueOf(JSON.parse(json))));
-		
+
 		super.notifyListeners(attack);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -79,6 +81,7 @@ public class MongoAttackStore extends AttackStore {
 
 		User user = criteria.getUser();
 		DetectionPoint detectionPoint = criteria.getDetectionPoint();
+		Rule rule = criteria.getRule();
 		Collection<String> detectionSystemIds = criteria.getDetectionSystemIds();
 
 
@@ -100,6 +103,12 @@ public class MongoAttackStore extends AttackStore {
 			}
 		}
 
+		if(rule != null) {
+			if(rule.getGuid() != null) {
+				filters.add(Filters.eq("rule.guid", rule.getGuid()));
+			}
+		}
+
 		FindIterable<Document> iterable = attacks.find(Filters.and(filters));
 
 		iterable.forEach(new Block<Document>() {
@@ -117,19 +126,19 @@ public class MongoAttackStore extends AttackStore {
 
 		return matches;
 	}
-	
+
 	@PostConstruct
 	private void initializeMongo() {
 		attacks = initializeCollection();
-		
+
 		if(attacks == null) {
 			attacks = defaultInitialize();
 		}
 	}
-	
+
 	private MongoCollection<Document> defaultInitialize() {
 		MongoCollection<Document> collection = null;
-		
+
 		try {
 			MongoClient mongoClient = new MongoClient();
 			MongoDatabase db = mongoClient.getDatabase("appsensor_db");
@@ -140,17 +149,17 @@ public class MongoAttackStore extends AttackStore {
 			}
 			e.printStackTrace();
 		}
-		
+
 		return collection;
 	}
-	
+
 	/**
 	 * Default implementation - override if you want a custom initializer.
-	 * 
+	 *
 	 * @return DBCollection you want to write to.
 	 */
 	public MongoCollection<Document> initializeCollection() {
 		return null;
 	}
-	
+
 }

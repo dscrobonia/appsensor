@@ -1,8 +1,13 @@
 package org.owasp.appsensor.storage.elasticsearch.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.owasp.appsensor.core.DetectionPoint;
 import org.owasp.appsensor.core.Event;
 import org.owasp.appsensor.core.criteria.SearchCriteria;
+import org.owasp.appsensor.core.rule.Rule;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -26,7 +31,18 @@ public class EventRepository extends AbstractElasticRepository {
 
 
     public List<Event> findEventsBySearchCriteria(SearchCriteria criteria) throws IOException {
-        return findBySearchCriteria(criteria, Event.class);
+    	Rule rule = criteria.getRule();
+    	criteria.setRule(null);
+
+    	BoolQueryBuilder query = convertSearchCriteriaToQueryBuilder(criteria);
+
+    	if (rule !=  null) {
+    		for (DetectionPoint detectionPoint : rule.getAllDetectionPoints()) {
+    			query.should(buildDetectionPointBoolQuery(QueryBuilders.boolQuery(), detectionPoint));
+    		}
+    	}
+
+        return findByQueryBuilder(query, Event.class);
     }
 
     @Override
