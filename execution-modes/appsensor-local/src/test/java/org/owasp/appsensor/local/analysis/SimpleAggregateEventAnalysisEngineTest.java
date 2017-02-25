@@ -88,6 +88,16 @@ public class SimpleAggregateEventAnalysisEngineTest {
 				setDetectionSystemIds(detectionSystems1));
 	}
 
+	@Before
+	public void initializeTest() {
+		if (myEngine == null) {
+			initialSetup();
+		}
+
+		// clear rules
+		setRule(appSensorServer, null);
+	}
+
 	public void initialSetup() {
 		//instantiate server
 		ServerConfiguration updatedConfiguration = appSensorServer.getConfiguration();
@@ -107,8 +117,6 @@ public class SimpleAggregateEventAnalysisEngineTest {
 
 	@Test
 	public void test1_DP1() throws Exception {
-		initialSetup();
-
 		//Add rule
 		setRule(appSensorServer, rules.get(0));
 
@@ -155,11 +163,6 @@ public class SimpleAggregateEventAnalysisEngineTest {
 		ServerConfiguration updatedConfiguration = appSensorServer.getConfiguration();
 		updatedConfiguration.setRules(rules);
 		appSensorServer.setConfiguration(updatedConfiguration);
-	}
-
-	private void clearStores() {
-		((InMemoryAttackStore) appSensorServer.getAttackStore()).clearAll();
-		((InMemoryEventStore) appSensorServer.getEventStore()).clearAll();
 	}
 
 	private static ArrayList<Rule> generateRules() {

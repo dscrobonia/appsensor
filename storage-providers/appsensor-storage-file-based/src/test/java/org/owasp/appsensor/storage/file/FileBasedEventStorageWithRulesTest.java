@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.junit.Before;
 import org.owasp.appsensor.core.AppSensorServer;
-import org.owasp.appsensor.local.analysis.ReferenceStatisticalEventAnalysisEngineTest;
 import org.owasp.appsensor.local.analysis.SimpleAggregateEventAnalysisEngineTest;
 
 

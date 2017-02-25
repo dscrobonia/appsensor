@@ -174,6 +174,7 @@ public abstract class AttackStore {
 		boolean detectionPointMatch = (detectionPoint != null) ?
 				detectionPoint.typeAndThresholdMatches(attack.getDetectionPoint()) : true;
 
+		//todo: change
 		boolean ruleMatch = (rule != null) ?
 				rule.equals(attack.getRule()) : true;
 
