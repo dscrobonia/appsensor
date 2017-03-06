@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 import javax.inject.Inject;
@@ -81,7 +80,7 @@ public class AggregateEventAnalysisEngine extends EventAnalysisEngine {
 	 */
 	protected boolean checkRule(Event triggerEvent, Rule rule) {
 		Queue<Notification> notifications = getNotifications(triggerEvent, rule);
-		Queue<Notification> windowedNotifications = new PriorityQueue<Notification>(1, Notification.getStartTimeAscendingComparator());
+		Queue<Notification> windowedNotifications = new LinkedList<Notification>();
 		Iterator<Expression> expressions = rule.getExpressions().iterator();
 		Expression currentExpression = expressions.next();
 		Notification tail = null;
@@ -202,7 +201,7 @@ public class AggregateEventAnalysisEngine extends EventAnalysisEngine {
 			}
 		}
 
-		Collections.sort(notificationQueue, Notification.getEndTimeAscendingComparator());
+		Collections.sort(notificationQueue, Notification.getStartTimeAscendingComparator());
 
 		return notificationQueue;
 	}
