@@ -2,11 +2,14 @@ package org.owasp.appsensor.storage.influxdb;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
+import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.appsensor.core.AppSensorClient;
 import org.owasp.appsensor.core.AppSensorServer;
@@ -20,14 +23,7 @@ import org.owasp.appsensor.core.User;
 import org.owasp.appsensor.core.configuration.server.ServerConfiguration;
 import org.owasp.appsensor.core.criteria.SearchCriteria;
 import org.owasp.appsensor.local.analysis.SimpleAggregateEventAnalysisEngineTest;
-import org.slf4j.Logger;
 import org.springframework.core.env.Environment;
-
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.inject.Inject;
 
 /**
  * Test basic InfluxDb based * Store's by extending the ReferenceStatisticalEventAnalysisEngineTest
@@ -37,8 +33,6 @@ import javax.inject.Inject;
  * @author John Melton (jtmelton@gmail.com) http://www.jtmelton.com/
  */
 public class InfluxDbEventStorageWithRulesTest extends SimpleAggregateEventAnalysisEngineTest {
-
-  private Logger logger;
 
   private static User bob = new User("bob");
 
@@ -57,12 +51,9 @@ public class InfluxDbEventStorageWithRulesTest extends SimpleAggregateEventAnaly
   @Inject
   AppSensorClient appSensorClient;
 
-  @BeforeClass
-  public static void doSetup() {
-    detectionPoint1.setCategory(DetectionPoint.Category.INPUT_VALIDATION);
-    detectionPoint1.setLabel("IE1");
-
-    detectionSystems1.add(detectionSystem1);
+  @Before
+  public void checkInitialization() {
+	  Assume.assumeTrue(isInitializedProperly());
   }
 
   @Test
