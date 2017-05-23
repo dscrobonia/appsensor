@@ -175,8 +175,11 @@ public abstract class AttackStore {
 				detectionPoint.typeAndThresholdMatches(attack.getDetectionPoint()) : true;
 
 		//todo: change
-		boolean ruleMatch = (rule != null) ?
-				rule.equals(attack.getRule()) : true;
+		boolean ruleMatch = true;
+		if (rule != null) {
+			ruleMatch = (attack.getRule() != null) ?
+				rule.guidMatches(attack.getRule()) : false;
+		}
 
 		boolean earliestMatch = (earliest != null) ? earliest.isBefore(DateUtils.fromString(attack.getTimestamp())): true;
 
